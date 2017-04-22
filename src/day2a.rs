@@ -1,19 +1,21 @@
 use std::fmt::Write;
 
-enum Direction {
+use self::Direction::*;
+
+pub enum Direction {
     Up,
     Right,
     Down,
     Left,
 }
-use self::Direction::*;
 
-fn parse_direction(i: u8) -> Direction {
+pub fn parse_direction(i: char) -> Direction {
+    println!("{:#?}", i);
     match i {
-        b'U' => Up,
-        b'R' => Right,
-        b'D' => Down,
-        b'L' => Left,
+        'U' => Up,
+        'R' => Right,
+        'D' => Down,
+        'L' => Left,
         _ => unreachable!(),
     }
 }
@@ -54,15 +56,15 @@ fn advance(num: u8, direction: Direction) -> u8 {
     }
 }
 
-pub fn run(input: &[u8]) -> String {
+pub fn run(input: &str) -> String {
     let mut num = 5;
     let mut code = String::with_capacity(8);
 
-    for c in input.iter() {
-        if *c == b'\n' {
+    for c in input.chars() {
+        if c == '\n' {
             write!(code, "{}", num).unwrap();
         } else {
-            num = advance(num, parse_direction(*c));
+            num = advance(num, parse_direction(c));
         }
     }
 
@@ -71,7 +73,7 @@ pub fn run(input: &[u8]) -> String {
 
 #[test]
 fn test() {
-    assert_eq!(super::run_exercise("day2a", &b"ULL\nRRDDD\nLURDL\nUUUUD\n"[..]),
+    assert_eq!(super::run_exercise("day2a", "ULL\nRRDDD\nLURDL\nUUUUD\n"),
                "1985");
     assert_eq!(super::run_exercise("day2a", None), "56855");
 }

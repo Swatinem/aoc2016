@@ -1,23 +1,15 @@
 use std::collections::HashSet;
-use parsers::*;
 
-named!(sep, eat_separator!(&b", "[..]));
-named!(parse_dir <(char, i64)>, delimited!(sep, tuple!(one_of!("RL"), int), sep));
-
-enum Direction {
-    N,
-    E,
-    S,
-    W,
-}
+use super::day1a::{Direction, Turn, parse_dir};
 use self::Direction::*;
+use self::Turn::*;
 
-type Coord = (i64, i64);
+type Coord = (i32, i32);
 
 fn record_line(visited: &mut HashSet<Coord>,
                mut coord: Coord,
                direction: &Direction,
-               num: i64)
+               num: i32)
                -> Result<Coord, Coord> {
     for _ in 0..num {
         match *direction {
@@ -34,25 +26,24 @@ fn record_line(visited: &mut HashSet<Coord>,
     Ok(coord)
 }
 
-pub fn run(input: &[u8]) -> String {
+pub fn run(input: &str) -> String {
     let mut direction = N;
     let mut visited = HashSet::new();
     let mut coord = (0, 0);
     let mut input = input;
 
-    while let IResult::Done(_input, (turn, num)) = parse_dir(input) {
-        input = _input;
+    let input = input.split(",").map(str::trim).map(parse_dir);
+    for (turn, num) in input {
         visited.insert(coord.clone());
         direction = match (direction, turn) {
-            (N, 'R') => E,
-            (N, 'L') => W,
-            (E, 'R') => S,
-            (E, 'L') => N,
-            (S, 'R') => W,
-            (S, 'L') => E,
-            (W, 'R') => N,
-            (W, 'L') => S,
-            _ => unreachable!(),
+            (N, R) => E,
+            (N, L) => W,
+            (E, R) => S,
+            (E, L) => N,
+            (S, R) => W,
+            (S, L) => E,
+            (W, R) => N,
+            (W, L) => S,
         };
         coord = match record_line(&mut visited, coord, &direction, num) {
             Ok(coord) => coord,
@@ -65,6 +56,6 @@ pub fn run(input: &[u8]) -> String {
 
 #[test]
 fn test() {
-    assert_eq!(super::run_exercise("day1b", &b"R8, R4, R4, R8"[..]), "4");
+    assert_eq!(super::run_exercise("day1b", "R8, R4, R4, R8"), "4");
     assert_eq!(super::run_exercise("day1b", None), "133");
 }

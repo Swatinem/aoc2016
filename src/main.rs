@@ -1,8 +1,3 @@
-#[macro_use]
-extern crate nom;
-
-mod parsers;
-
 mod day1a;
 mod day1b;
 mod day2a;
@@ -21,15 +16,17 @@ macro_rules! run {
 }
 
 pub fn run_exercise<'a, I>(exercise: &str, input: I) -> String
-    where I: Into<Option<&'a [u8]>>
+    where I: Into<Option<&'a str>>
 {
-    let mut buffer = Vec::with_capacity(4096);
-    let input = input.into().unwrap_or_else(|| {
-        let path = format!("./input/{}.txt", exercise);
-        let mut file = File::open(&path).unwrap();
-        file.read_to_end(&mut buffer).unwrap();
-        &buffer
-    });
+    let mut buffer = String::with_capacity(4096);
+    let input = input
+        .into()
+        .unwrap_or_else(|| {
+                            let path = format!("./input/{}.txt", exercise);
+                            let mut file = File::open(&path).unwrap();
+                            file.read_to_string(&mut buffer).unwrap();
+                            &buffer
+                        });
 
     run!(exercise(input) for
          day1a,

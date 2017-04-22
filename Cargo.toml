@@ -2,6 +2,3 @@
 name = "aoc2016"
 version = "0.1.0"
 authors = ["Arpad Borsos <arpad.borsos@googlemail.com>"]
-
-[dependencies]
-nom = "^2.1"
